@@ -80,6 +80,7 @@ export default function App() {
         <FormSplitBill
           selectedFriend={selectedFriend}
           onSplitBill={handleSplitBill}
+          key={selectedFriend.id}
         />
       )}
     </div>
@@ -130,6 +131,7 @@ function Friend({ friend, onSelection, selectedFriend }) {
 function FormAddFriend({ onAddFriend }) {
   const [name, setName] = useState("");
   const [image, setImage] = useState("https://i.pravatar.cc/48");
+  const [id, setId] = useState(crypto.randomUUID());
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -137,7 +139,7 @@ function FormAddFriend({ onAddFriend }) {
     if (!name || !image)
       return window.alert("There is no name or image of friend!");
 
-    const id = crypto.randomUUID();
+    // const id = crypto.randomUUID();
     const newFriend = {
       id,
       name,
@@ -149,6 +151,7 @@ function FormAddFriend({ onAddFriend }) {
 
     setName("");
     setImage("https://i.pravatar.cc/48");
+    setId("");
   }
 
   return (
@@ -173,15 +176,15 @@ function FormAddFriend({ onAddFriend }) {
 
 function FormSplitBill({ selectedFriend, onSplitBill }) {
   const [bill, setBill] = useState("");
-  const [paidByUser, setPayByUser] = useState("");
-  const paidByFriend = bill ? bill - paidByUser : "";
+  const [userExpense, setUserExpense] = useState("");
+  const friendExpense = bill ? bill - userExpense : "";
   const [whoIsPaying, setWhoIsPaying] = useState("user");
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    if (!bill || !paidByUser) return;
-    onSplitBill(whoIsPaying === "user" ? paidByFriend : -paidByUser);
+    if (!bill || !userExpense) return;
+    onSplitBill(whoIsPaying === "user" ? friendExpense : -userExpense);
   }
 
   return (
@@ -196,16 +199,16 @@ function FormSplitBill({ selectedFriend, onSplitBill }) {
       <label>🙋🏻 Your expense</label>
       <input
         type="text"
-        value={paidByUser}
+        value={userExpense}
         onChange={(e) =>
-          setPayByUser(
-            Number(e.target.value) > bill ? paidByUser : Number(e.target.value)
+          setUserExpense(
+            Number(e.target.value) > bill ? userExpense : Number(e.target.value)
           )
         }
       />
 
       <label>🧑‍🤝‍🧑 {selectedFriend.name} expense</label>
-      <input type="text" disabled value={paidByFriend} />
+      <input type="text" disabled value={friendExpense} />
 
       <label>😁 Who is paying the bill?</label>
       <select
